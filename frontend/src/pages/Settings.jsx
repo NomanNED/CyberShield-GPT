@@ -48,7 +48,7 @@ export default function Settings() {
 
   // ── Fetch current settings ────────────────────────────────────────────────
   useEffect(() => {
-    fetch(apiUrl('/api/settings'))
+    fetch(apiUrl('/settings'))
       .then(r => r.json())
       .then(data => {
         setCfg(data);
@@ -66,7 +66,7 @@ export default function Settings() {
   async function patch(key, value) {
     setSaving(true);
     try {
-      const res  = await fetch(apiUrl('/api/settings'), {
+      const res  = await fetch(apiUrl('/settings'), {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify({ [key]: value }),
@@ -93,7 +93,7 @@ export default function Settings() {
   async function clearHistory() {
     setSaving(true);
     try {
-      const res  = await fetch(apiUrl('/api/settings/clear-history'), { method: 'POST' });
+      const res  = await fetch(apiUrl('/settings/clear-history'), { method: 'POST' });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
       showToast('Scan history cleared.');
@@ -108,6 +108,7 @@ export default function Settings() {
   async function checkHealth() {
     try {
       const res  = await fetch(apiUrl('/health'));
+
       const data = await res.json();
       setHealth(data.status === 'ok' ? 'Backend online' : 'Unexpected response');
     } catch {
