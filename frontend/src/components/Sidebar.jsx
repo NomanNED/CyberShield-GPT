@@ -2,7 +2,8 @@
  * Sidebar.jsx
  * Left-side navigation for all CyberShield GPT tools.
  */
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 const isMac = typeof navigator !== 'undefined' && /Mac/i.test(navigator.platform);
 
 const NAV_SECTIONS = [
@@ -44,6 +45,14 @@ const NAV_SECTIONS = [
 ];
 
 export default function Sidebar({ onOpenPalette }) {
+  const { user, logout } = useAuth();
+  const navigate         = useNavigate();
+
+  const handleSignOut = async () => {
+    await logout();
+    navigate('/');
+  };
+
   return (
     <nav className="sidebar">
       <div className="sidebar-brand">
@@ -92,6 +101,30 @@ export default function Sidebar({ onOpenPalette }) {
           </div>
         ))}
       </div>
+
+      {/* ── User section ──────────────────────────────────── */}
+      {user ? (
+        <div className="sidebar-user">
+          <div className="sidebar-user-avatar">
+            {user.photoURL
+              ? <img src={user.photoURL} alt="" referrerPolicy="no-referrer" />
+              : <span>{(user.displayName || user.email || '?')[0].toUpperCase()}</span>
+            }
+          </div>
+          <div className="sidebar-user-info">
+            <span className="sidebar-user-name">{user.displayName || 'User'}</span>
+            <span className="sidebar-user-email">{user.email}</span>
+          </div>
+          <button type="button" className="sidebar-signout" onClick={handleSignOut} title="Sign out">
+            ⏻
+          </button>
+        </div>
+      ) : (
+        <button type="button" className="sidebar-signin-prompt" onClick={() => navigate('/auth')}>
+          <span className="sidebar-signin-icon">⊙</span>
+          Sign in to sync history
+        </button>
+      )}
     </nav>
   );
 }

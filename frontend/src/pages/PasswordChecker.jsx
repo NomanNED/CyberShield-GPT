@@ -3,6 +3,7 @@
  * Rates password strength and shows actionable improvement tips.
  */
 import { useState } from 'react';
+import { apiUrl } from '../lib/api';
 import ResultCard from '../components/ResultCard';
 
 const STRENGTH_COLORS = { Weak: '#ff4444', Medium: '#ffaa00', Strong: '#00ff88' };
@@ -19,7 +20,7 @@ export default function PasswordChecker() {
     if (!password) return;
     setLoading(true); setError(null); setResult(null);
     try {
-      const res  = await fetch('/check-password', {
+      const res  = await fetch(apiUrl('/check-password'), {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify({ password }),

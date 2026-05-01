@@ -4,6 +4,9 @@
  * Firebase persistence + Google sign-in will be wired in a future phase.
  */
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { apiUrl } from '../lib/api';
+import { useAuth } from '../contexts/AuthContext';
+import { getUserScans, clearUserScans } from '../lib/firestore';
 
 const TYPE_META = {
   'Phishing Analysis':   { code: 'INV-01', cls: 'inv'   },
@@ -110,6 +113,7 @@ function ScanDetailModal({ scan, onClose }) {
 
 /* ── Main page ──────────────────────────────────────────────────────────── */
 export default function History() {
+  const { user }           = useAuth();
   const [scans,        setScans]        = useState([]);
   const [stats,        setStats]        = useState({ total: 0, threats: 0, warns: 0, safe: 0 });
   const [loading,      setLoading]      = useState(true);
@@ -119,28 +123,48 @@ export default function History() {
   const [selected,     setSelected]     = useState(null);
   const [clearing,     setClearing]     = useState(false);
 
+  const computeStats = (list) => ({
+    total:   list.length,
+    threats: list.filter(s => s.verdict === 'threat').length,
+    warns:   list.filter(s => s.verdict === 'warn').length,
+    safe:    list.filter(s => s.verdict === 'safe').length,
+  });
+
   const load = useCallback(async () => {
+    setLoading(true);
     try {
-      const res  = await fetch('/scan-history?limit=100');
-      if (!res.ok) throw new Error('Backend returned ' + res.status);
-      const data = await res.json();
-      setScans(data.scans  || []);
-      setStats(data.stats  || { total: 0, threats: 0, warns: 0, safe: 0 });
+      if (user) {
+        // Signed in — load from Firestore
+        const list = await getUserScans(user.uid, 100);
+        setScans(list);
+        setStats(computeStats(list));
+      } else {
+        // Guest — load from backend session store
+        const res  = await fetch(apiUrl('/scan-history?limit=100'));
+        if (!res.ok) throw new Error('Backend returned ' + res.status);
+        const data = await res.json();
+        setScans(data.scans  || []);
+        setStats(data.stats  || { total: 0, threats: 0, warns: 0, safe: 0 });
+      }
       setError(null);
     } catch (e) {
-      setError(e.message || 'Could not reach the backend.');
+      setError(e.message || 'Could not load history.');
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [user]);
 
   useEffect(() => { load(); }, [load]);
 
   const clearAll = async () => {
-    if (!window.confirm('Clear all scan history for this session?')) return;
+    if (!window.confirm('Clear all scan history?')) return;
     setClearing(true);
     try {
-      await fetch('/api/settings/clear-history', { method: 'POST' });
+      if (user) {
+        await clearUserScans(user.uid);
+      } else {
+        await fetch(apiUrl('/api/settings/clear-history'), { method: 'POST' });
+      }
       setScans([]);
       setStats({ total: 0, threats: 0, warns: 0, safe: 0 });
     } catch { /* best-effort */ }

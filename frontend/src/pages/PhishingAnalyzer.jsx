@@ -4,8 +4,12 @@
  */
 import { useState } from 'react';
 import AnalysisResult from '../components/AnalysisResult';
+import { apiUrl } from '../lib/api';
+import { useAuth } from '../contexts/AuthContext';
+import { saveScan } from '../lib/firestore';
 
 export default function PhishingAnalyzer() {
+  const { user } = useAuth();
   const [text,      setText]      = useState('');
   const [result,    setResult]    = useState(null);
   const [loading,   setLoading]   = useState(false);
@@ -15,7 +19,7 @@ export default function PhishingAnalyzer() {
     if (!text.trim()) return;
     setLoading(true); setError(null); setResult(null);
     try {
-      const res  = await fetch('/analyze', {
+      const res  = await fetch(apiUrl('/analyze'), {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify({ text }),
@@ -23,6 +27,15 @@ export default function PhishingAnalyzer() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || `Server error ${res.status}`);
       setResult(data);
+      if (user) {
+        saveScan(user.uid, {
+          type:       'Phishing Analysis',
+          input:      text.slice(0, 300),
+          riskScore:  data.risk_score ?? 0,
+          verdict:    data.is_phishing ? 'threat' : data.risk_score >= 30 ? 'warn' : 'safe',
+          confidence: data.confidence ?? Math.round((data.risk_score ?? 0) * 0.9),
+        });
+      }
     } catch (e) {
       const offline = e instanceof TypeError || e.message === 'Failed to fetch';
       setError(offline ? '__offline__' : e.message);

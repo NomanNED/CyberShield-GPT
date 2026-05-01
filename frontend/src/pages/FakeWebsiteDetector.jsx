@@ -3,9 +3,13 @@
  * Detects if a URL is a fake / typosquatted version of a popular brand.
  */
 import { useState } from 'react';
+import { apiUrl } from '../lib/api';
+import { useAuth } from '../contexts/AuthContext';
+import { saveScan } from '../lib/firestore';
 import AnalysisResult from '../components/AnalysisResult';
 
 export default function FakeWebsiteDetector() {
+  const { user } = useAuth();
   const [url,     setUrl]     = useState('');
   const [result,  setResult]  = useState(null);
   const [loading, setLoading] = useState(false);
@@ -15,7 +19,7 @@ export default function FakeWebsiteDetector() {
     if (!url.trim()) return;
     setLoading(true); setError(null); setResult(null);
     try {
-      const res  = await fetch('/detect-fake-site', {
+      const res  = await fetch(apiUrl('/detect-fake-site'), {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify({ url }),
@@ -23,6 +27,15 @@ export default function FakeWebsiteDetector() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || `Server error ${res.status}`);
       setResult(data);
+      if (user) {
+        saveScan(user.uid, {
+          type:       'Fake Site Detection',
+          input:      url.slice(0, 300),
+          riskScore:  data.risk_score ?? 0,
+          verdict:    data.is_fake ? 'threat' : data.risk_score >= 30 ? 'warn' : 'safe',
+          confidence: data.confidence ?? Math.round((data.risk_score ?? 0) * 0.9),
+        });
+      }
     } catch (e) {
       const offline = e instanceof TypeError || e.message === 'Failed to fetch';
       setError(offline ? '__offline__' : e.message);

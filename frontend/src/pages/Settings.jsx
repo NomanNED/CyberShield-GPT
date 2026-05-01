@@ -3,6 +3,7 @@
  * Reads from and writes to GET/POST /settings on the backend.
  */
 import { useState, useEffect } from 'react';
+import { apiUrl } from '../lib/api';
 
 const SECTION = ({ title, kicker, children }) => (
   <section className="settings-section">
@@ -47,7 +48,7 @@ export default function Settings() {
 
   // ── Fetch current settings ────────────────────────────────────────────────
   useEffect(() => {
-    fetch('/api/settings')
+    fetch(apiUrl('/api/settings'))
       .then(r => r.json())
       .then(data => {
         setCfg(data);
@@ -65,7 +66,7 @@ export default function Settings() {
   async function patch(key, value) {
     setSaving(true);
     try {
-      const res  = await fetch('/api/settings', {
+      const res  = await fetch(apiUrl('/api/settings'), {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify({ [key]: value }),
@@ -92,7 +93,7 @@ export default function Settings() {
   async function clearHistory() {
     setSaving(true);
     try {
-      const res  = await fetch('/api/settings/clear-history', { method: 'POST' });
+      const res  = await fetch(apiUrl('/api/settings/clear-history'), { method: 'POST' });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
       showToast('Scan history cleared.');
@@ -106,7 +107,7 @@ export default function Settings() {
   const [health, setHealth] = useState(null);
   async function checkHealth() {
     try {
-      const res  = await fetch('/health');
+      const res  = await fetch(apiUrl('/health'));
       const data = await res.json();
       setHealth(data.status === 'ok' ? 'Backend online' : 'Unexpected response');
     } catch {

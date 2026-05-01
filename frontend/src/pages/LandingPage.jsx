@@ -182,8 +182,7 @@ export default function LandingPage() {
             <button
               type="button"
               className="landing-signin-btn"
-              disabled
-              title="Sign in — Firebase integration coming soon"
+              onClick={() => navigate('/auth')}
             >
               Sign In
             </button>
@@ -227,8 +226,7 @@ export default function LandingPage() {
               <button
                 type="button"
                 className="hero-signin-link"
-                disabled
-                title="Coming soon"
+                onClick={() => navigate('/auth')}
               >
                 Already have an account? <span>Sign in</span>
               </button>

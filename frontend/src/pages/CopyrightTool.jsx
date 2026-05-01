@@ -3,6 +3,7 @@
  * Generates a SHA-256 digital fingerprint for an uploaded image.
  */
 import { useState } from 'react';
+import { apiUrl } from '../lib/api';
 import ResultCard from '../components/ResultCard';
 
 export default function CopyrightTool() {
@@ -27,7 +28,7 @@ export default function CopyrightTool() {
     try {
       const form = new FormData();
       form.append('image', file);
-      const res  = await fetch('/image-hash', { method: 'POST', body: form });
+      const res  = await fetch(apiUrl('/image-hash'), { method: 'POST', body: form });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
       setResult(data);

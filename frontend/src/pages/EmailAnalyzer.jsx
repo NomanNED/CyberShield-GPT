@@ -3,6 +3,9 @@
  * Analyzes email text for social engineering indicators.
  */
 import { useState } from 'react';
+import { apiUrl } from '../lib/api';
+import { useAuth } from '../contexts/AuthContext';
+import { saveScan } from '../lib/firestore';
 import AnalysisResult from '../components/AnalysisResult';
 
 // Simple function to wrap matched phrases in a highlight span
@@ -22,6 +25,7 @@ function highlight(text, phrases) {
 }
 
 export default function EmailAnalyzer() {
+  const { user } = useAuth();
   const [text,    setText]    = useState('');
   const [result,  setResult]  = useState(null);
   const [loading, setLoading] = useState(false);
@@ -31,7 +35,7 @@ export default function EmailAnalyzer() {
     if (!text.trim()) return;
     setLoading(true); setError(null); setResult(null);
     try {
-      const res  = await fetch('/analyze-email', {
+      const res  = await fetch(apiUrl('/analyze-email'), {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify({ text }),
@@ -39,6 +43,15 @@ export default function EmailAnalyzer() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || `Server error ${res.status}`);
       setResult(data);
+      if (user) {
+        saveScan(user.uid, {
+          type:       'Email Threat Triage',
+          input:      text.slice(0, 300),
+          riskScore:  data.risk_score ?? 0,
+          verdict:    data.threat_level === 'HIGH' ? 'threat' : data.threat_level === 'MEDIUM' ? 'warn' : 'safe',
+          confidence: data.confidence ?? Math.round((data.risk_score ?? 0) * 0.9),
+        });
+      }
     } catch (e) {
       const offline = e instanceof TypeError || e.message === 'Failed to fetch';
       setError(offline ? '__offline__' : e.message);

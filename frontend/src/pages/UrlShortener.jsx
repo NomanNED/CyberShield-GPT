@@ -3,6 +3,7 @@
  * Shortens URLs with an integrated phishing safety check.
  */
 import { useState } from 'react';
+import { apiUrl } from '../lib/api';
 import ResultCard from '../components/ResultCard';
 import RiskBar from '../components/RiskBar';
 
@@ -16,7 +17,7 @@ export default function UrlShortener() {
     if (!url.trim()) return;
     setLoading(true); setError(null); setResult(null);
     try {
-      const res  = await fetch('/shorten-url', {
+      const res  = await fetch(apiUrl('/shorten-url'), {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify({ url }),

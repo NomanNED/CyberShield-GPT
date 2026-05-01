@@ -3,6 +3,7 @@
  * Displays the scam awareness dataset fetched from GET /scams.
  */
 import { useState, useEffect } from 'react';
+import { apiUrl } from '../lib/api';
 
 const SEVERITY_COLOR = { Critical: '#ff4444', High: '#ff8800', Medium: '#ffcc00', Low: '#00ff88' };
 const ALL_CATEGORIES = 'All';
@@ -14,7 +15,7 @@ export default function ScamDashboard() {
   const [activeTab,  setActiveTab]  = useState(ALL_CATEGORIES);
 
   useEffect(() => {
-    fetch('/scams')
+    fetch(apiUrl('/scams'))
       .then(r => r.json())
       .then(d => { setData(d); setLoading(false); })
       .catch(e => { setError(e.message); setLoading(false); });

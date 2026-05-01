@@ -1,5 +1,6 @@
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { AuthProvider }     from './contexts/AuthContext';
 import Sidebar from './components/Sidebar';
 import CommandPalette from './components/CommandPalette';
 import HomeDashboard from './pages/HomeDashboard';
@@ -13,6 +14,7 @@ import ScamDashboard      from './pages/ScamDashboard';
 import Settings           from './pages/Settings';
 import History            from './pages/History';
 import LandingPage        from './pages/LandingPage';
+import AuthPage           from './pages/AuthPage';
 import './App.css';
 
 /**
@@ -87,15 +89,16 @@ export default function App() {
     },
   };
 
-  const isLanding   = location.pathname === '/';
+  const isPublic    = ['/', '/auth'].includes(location.pathname);
   const currentMeta = routeMeta[location.pathname] || routeMeta['/dashboard'];
 
   return (
-    <>
+    <AuthProvider>
       <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />
-      {isLanding ? (
+      {isPublic ? (
         <Routes>
-          <Route path="/" element={<LandingPage />} />
+          <Route path="/"     element={<LandingPage />} />
+          <Route path="/auth" element={<AuthPage />} />
         </Routes>
       ) : (
         <div className="app-shell">
@@ -129,6 +132,6 @@ export default function App() {
           </main>
         </div>
       )}
-    </>
+    </AuthProvider>
   );
 }

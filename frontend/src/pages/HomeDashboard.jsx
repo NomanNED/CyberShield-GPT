@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect, useCallback } from 'react';
+import { apiUrl } from '../lib/api';
 
 /* ── Threat distribution ring (SVG donut, no library) ─────────────────── */
 function ThreatRing({ stats }) {
@@ -149,7 +150,7 @@ export default function HomeDashboard() {
 
   const fetchFeed = useCallback(async () => {
     try {
-      const res  = await fetch('/scan-history?limit=10');
+      const res  = await fetch(apiUrl('/scan-history?limit=10'));
       if (!res.ok) throw new Error('not ok');
       const data = await res.json();
       setLiveStats(data.stats || EMPTY_STATS);
