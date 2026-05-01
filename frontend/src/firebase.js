@@ -16,8 +16,11 @@ const firebaseConfig = {
   appId:             import.meta.env.VITE_FIREBASE_APP_ID             ?? '',
 };
 
-const app = initializeApp(firebaseConfig);
+// Only initialise if we have a real API key (avoids crash on Vercel when env vars are missing)
+const hasConfig = !!firebaseConfig.apiKey;
 
-export const auth           = getAuth(app);
-export const db             = getFirestore(app);
-export const googleProvider = new GoogleAuthProvider();
+const app = hasConfig ? initializeApp(firebaseConfig) : null;
+
+export const auth           = hasConfig ? getAuth(app)           : null;
+export const db             = hasConfig ? getFirestore(app)      : null;
+export const googleProvider = hasConfig ? new GoogleAuthProvider() : null;

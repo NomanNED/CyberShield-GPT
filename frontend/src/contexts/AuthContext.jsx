@@ -13,6 +13,7 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(undefined);
 
   useEffect(() => {
+    if (!auth) { setUser(null); return; }  // Firebase not configured — treat as guest
     const unsub = onAuthStateChanged(auth, (u) => setUser(u ?? null));
     return unsub;
   }, []);
