@@ -8,16 +8,16 @@ require('dotenv').config();
 const express = require('express');
 const cors    = require('cors');
 
-const analyzeRouter     = require('../../backend/routes/analyze');
-const fakeSiteRouter    = require('../../backend/routes/fakeSite');
-const emailRouter       = require('../../backend/routes/email');
-const passwordRouter    = require('../../backend/routes/password');
-const urlShortenerRoute = require('../../backend/routes/urlShortener');
-const imageHashRouter   = require('../../backend/routes/imageHash');
-const scamsRouter       = require('../../backend/routes/scams');
-const settingsRouter    = require('../../backend/routes/settings');
-const { redirectHandler } = require('../../backend/routes/urlShortener');
-const { getHistory, getStats } = require('../../backend/scanHistory');
+const analyzeRouter     = require('../backend/routes/analyze');
+const fakeSiteRouter    = require('../backend/routes/fakeSite');
+const emailRouter       = require('../backend/routes/email');
+const passwordRouter    = require('../backend/routes/password');
+const urlShortenerRoute = require('../backend/routes/urlShortener');
+const imageHashRouter   = require('../backend/routes/imageHash');
+const scamsRouter       = require('../backend/routes/scams');
+const settingsRouter    = require('../backend/routes/settings');
+const { redirectHandler } = require('../backend/routes/urlShortener');
+const { getHistory, getStats } = require('../backend/scanHistory');
 
 const app = express();
 
