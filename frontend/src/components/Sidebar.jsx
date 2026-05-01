@@ -1,0 +1,97 @@
+/**
+ * Sidebar.jsx
+ * Left-side navigation for all CyberShield GPT tools.
+ */
+import { NavLink } from 'react-router-dom';
+const isMac = typeof navigator !== 'undefined' && /Mac/i.test(navigator.platform);
+
+const NAV_SECTIONS = [
+  {
+    title: 'Overview',
+    items: [
+      { path: '/dashboard', label: 'Command Center', code: 'CC-01' },
+    ],
+  },
+  {
+    title: 'Investigations',
+    items: [
+      { path: '/analyze', label: 'Phishing Analysis', code: 'INV-01' },
+      { path: '/fake-site', label: 'Fake Website Detection', code: 'INV-02' },
+      { path: '/email', label: 'Email Security Analysis', code: 'INV-03' },
+    ],
+  },
+  {
+    title: 'Utilities',
+    items: [
+      { path: '/password', label: 'Password Strength', code: 'UTL-01' },
+      { path: '/shorten', label: 'Secure URL Shortener', code: 'UTL-02' },
+      { path: '/copyright', label: 'Digital Fingerprint', code: 'UTL-03' },
+      { path: '/scams', label: 'Scam Intelligence', code: 'UTL-04' },
+    ],
+  },
+  {
+    title: 'Intelligence',
+    items: [
+      { path: '/history', label: 'Scan History', code: 'INT-01' },
+    ],
+  },
+  {
+    title: 'System',
+    items: [
+      { path: '/settings', label: 'Settings', code: 'SYS-01' },
+    ],
+  },
+];
+
+export default function Sidebar({ onOpenPalette }) {
+  return (
+    <nav className="sidebar">
+      <div className="sidebar-brand">
+        <div>
+          <span className="brand-tag">Generative AI Cyber Threat Platform</span>
+          <span className="brand-name">CyberShield GPT</span>
+        </div>
+      </div>
+
+      <div className="sidebar-summary">
+        <span className="sidebar-summary-label">System status</span>
+        <strong>Ready for live analysis</strong>
+        <p>Hybrid scoring, inspection, and AI reasoning available through one shell.</p>
+      </div>
+
+      {/* Command palette trigger */}
+      <button
+        type="button"
+        className="palette-trigger"
+        onClick={onOpenPalette}
+        title="Open command palette"
+      >
+        <span className="palette-trigger-icon">⌕</span>
+        <span className="palette-trigger-label">Quick navigate…</span>
+        <kbd className="palette-trigger-kbd">{isMac ? '⌘K' : 'Ctrl K'}</kbd>
+      </button>
+
+      <div className="sidebar-sections">
+        {NAV_SECTIONS.map(section => (
+          <div key={section.title} className="sidebar-section">
+            <span className="sidebar-section-title">{section.title}</span>
+            <ul className="sidebar-nav">
+              {section.items.map(item => (
+                <li key={item.path}>
+                  <NavLink
+                    to={item.path}
+                    end={item.path === '/'}
+                    className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}
+                  >
+                    <span className="nav-code">{item.code}</span>
+                    <span className="nav-label">{item.label}</span>
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </nav>
+  );
+}
