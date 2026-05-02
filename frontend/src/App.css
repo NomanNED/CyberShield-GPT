@@ -4425,3 +4425,295 @@ mark.highlight {
 }
 
 .sidebar-signin-icon { font-size: .9rem; }
+
+/* ---------------------------------------------------------------------------
+   MOBILE RESPONSIVE — Full overhaul for screens = 768px
+   --------------------------------------------------------------------------- */
+
+/* -- Table horizontal scroll wrapper -------------------------------------- */
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+}
+
+/* -- Hamburger button (app shell) ----------------------------------------- */
+.hamburger-btn {
+  display: none;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.15rem;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-right: 0.75rem;
+}
+
+/* -- Sidebar overlay backdrop --------------------------------------------- */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  z-index: 99;
+  cursor: pointer;
+}
+.sidebar-overlay.overlay--visible {
+  display: block;
+}
+
+/* -- Sidebar close button (mobile only) ----------------------------------- */
+.sidebar-close-btn {
+  display: none;
+  position: absolute;
+  top: 0.85rem;
+  right: 0.85rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 2rem;
+  height: 2rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+/* -- Landing page hamburger ----------------------------------------------- */
+.landing-hamburger {
+  display: none;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #fff;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.15rem;
+  align-items: center;
+  justify-content: center;
+}
+
+/* -- Mobile fullscreen nav overlay (landing) ------------------------------ */
+.mobile-nav-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 5, 5, 0.97);
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+}
+.mobile-nav-close {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #fff;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mobile-nav-links {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.75rem;
+}
+.mobile-nav-link {
+  color: #fff;
+  text-decoration: none;
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  opacity: 0.85;
+  transition: opacity 0.15s;
+}
+.mobile-nav-link:hover { opacity: 1; }
+.mobile-nav-signin {
+  background: var(--accent, #00ff88);
+  color: #000;
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 0.5rem;
+}
+
+/* ---------------------------------------------------------------------------
+   BREAKPOINT = 768px  — Main mobile layout
+   --------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+
+  /* Show hamburger and close buttons */
+  .hamburger-btn      { display: flex; }
+  .sidebar-close-btn  { display: flex; }
+  .landing-hamburger  { display: flex; }
+
+  /* Hide desktop landing nav links */
+  .landing-nav-links  { display: none; }
+
+  /* Sidebar becomes a fixed slide-in drawer */
+  .app-shell {
+    grid-template-columns: 1fr !important;
+  }
+
+  .sidebar {
+    position: fixed !important;
+    top: 0;
+    left: -100%;
+    width: min(300px, 85vw);
+    height: 100vh;
+    z-index: 100;
+    transition: left 0.28s ease;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border-right: 1px solid var(--border) !important;
+    border-bottom: none !important;
+    min-height: 100vh !important;
+  }
+
+  .sidebar.sidebar--open {
+    left: 0;
+  }
+
+  /* Topbar adjustments */
+  .content-topbar {
+    flex-direction: row !important;
+    align-items: flex-start !important;
+    gap: 0 !important;
+    flex-wrap: nowrap;
+  }
+
+  .content-topbar > div {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .topbar-subtitle {
+    display: none;
+  }
+
+  .content-status-pill {
+    display: none !important;
+  }
+
+  /* Content padding */
+  .content {
+    padding: 0.75rem !important;
+  }
+
+  /* Form cards */
+  .scan-form-card {
+    padding: 1.1rem !important;
+  }
+
+  /* Live stats bar — wrap on small screens */
+  .live-stats-bar {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .live-indicator { display: none; }
+
+  /* History stats strip */
+  .history-stats-strip {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  /* Threat ring — hide on very small screens */
+  .threat-ring-wrap { display: none; }
+
+  /* Investigation tabs stacking */
+  .investigation-tabs-row {
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  /* Modal field grids — single column */
+  .modal-field-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Typography scale-down */
+  .content h1 {
+    font-size: clamp(1.1rem, 5vw, 1.6rem);
+  }
+
+  .content-eyebrow {
+    font-size: 0.65rem;
+  }
+
+  /* Dashboard stat cards */
+  .stat-card-value {
+    font-size: 1.6rem;
+  }
+
+  /* Settings fields */
+  .settings-field {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Form actions */
+  .form-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .form-actions button,
+  .form-actions a {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   BREAKPOINT = 480px  — Extra small phones
+   --------------------------------------------------------------------------- */
+@media (max-width: 480px) {
+  .content {
+    padding: 0.5rem !important;
+  }
+
+  .scan-form-card {
+    padding: 0.85rem !important;
+  }
+
+  .landing-nav-inner {
+    padding: 0 1rem;
+  }
+
+  .hero-cta-group {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .hero-cta-group button,
+  .hero-cta-group a {
+    width: 100%;
+  }
+
+  /* Hide scan feed columns that are less critical */
+  .scan-confidence-cell,
+  .scan-time-cell {
+    display: none;
+  }
+}

@@ -23,7 +23,13 @@ import './App.css';
  */
 export default function App() {
   const location   = useLocation();
-  const [paletteOpen, setPaletteOpen] = useState(false);
+  const [paletteOpen,  setPaletteOpen]  = useState(false);
+  const [sidebarOpen,  setSidebarOpen]  = useState(false);
+
+  // Close sidebar whenever the route changes
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [location.pathname]);
 
   useEffect(() => {
     function onKey(e) {
@@ -102,13 +108,31 @@ export default function App() {
         </Routes>
       ) : (
         <div className="app-shell">
-          <Sidebar onOpenPalette={() => setPaletteOpen(true)} />
+          {/* Mobile sidebar overlay */}
+          <div
+            className={`sidebar-overlay${sidebarOpen ? ' overlay--visible' : ''}`}
+            onClick={() => setSidebarOpen(false)}
+            aria-hidden="true"
+          />
+          <Sidebar
+            onOpenPalette={() => setPaletteOpen(true)}
+            isOpen={sidebarOpen}
+            onClose={() => setSidebarOpen(false)}
+          />
           <main className="content">
             <header className="content-topbar">
+              <button
+                type="button"
+                className="hamburger-btn"
+                onClick={() => setSidebarOpen(o => !o)}
+                aria-label="Toggle navigation"
+              >
+                ☰
+              </button>
               <div>
                 <span className="content-eyebrow">{currentMeta.eyebrow}</span>
                 <h1>{currentMeta.title}</h1>
-                <p>{currentMeta.subtitle}</p>
+                <p className="topbar-subtitle">{currentMeta.subtitle}</p>
               </div>
               <div className="content-status-pill">
                 <span className="status-indicator" aria-hidden="true" />

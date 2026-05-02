@@ -142,6 +142,7 @@ export default function LandingPage() {
   const navigate     = useNavigate();
   const [navHidden,  setNavHidden]  = useState(false);
   const [navScrolled,setNavScrolled]= useState(false);
+  const [menuOpen,   setMenuOpen]   = useState(false);
   const lastScrollY  = useRef(0);
 
   /* Hide nav on scroll-down, reveal on scroll-up */
@@ -158,6 +159,31 @@ export default function LandingPage() {
 
   return (
     <div className="landing">
+
+      {/* Mobile fullscreen menu */}
+      {menuOpen && (
+        <div className="mobile-nav-overlay" role="dialog" aria-modal="true">
+          <button
+            type="button"
+            className="mobile-nav-close"
+            onClick={() => setMenuOpen(false)}
+            aria-label="Close menu"
+          >
+            &#10005;
+          </button>
+          <nav className="mobile-nav-links">
+            <a href="#features" className="mobile-nav-link" onClick={() => setMenuOpen(false)}>Features</a>
+            <a href="#about"    className="mobile-nav-link" onClick={() => setMenuOpen(false)}>About</a>
+            <button
+              type="button"
+              className="mobile-nav-signin"
+              onClick={() => { setMenuOpen(false); navigate('/auth'); }}
+            >
+              Sign In
+            </button>
+          </nav>
+        </div>
+      )}
 
       {/* Invisible hover strip at top — reveals nav when it's hidden */}
       <div
@@ -187,6 +213,15 @@ export default function LandingPage() {
               Sign In
             </button>
           </nav>
+          {/* Mobile hamburger */}
+          <button
+            type="button"
+            className="landing-hamburger"
+            onClick={() => setMenuOpen(true)}
+            aria-label="Open menu"
+          >
+            &#9776;
+          </button>
         </div>
       </header>
 

@@ -288,6 +288,7 @@ export default function History() {
         )}
 
         {!loading && !error && visible.length > 0 && (
+          <div className="table-scroll">
           <table className="scan-feed-table">
             <thead>
               <tr>
@@ -343,6 +344,7 @@ export default function History() {
               })}
             </tbody>
           </table>
+          </div>
         )}
       </div>
 

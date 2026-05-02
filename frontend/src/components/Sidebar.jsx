@@ -44,7 +44,7 @@ const NAV_SECTIONS = [
   },
 ];
 
-export default function Sidebar({ onOpenPalette }) {
+export default function Sidebar({ onOpenPalette, isOpen, onClose }) {
   const { user, logout } = useAuth();
   const navigate         = useNavigate();
 
@@ -54,7 +54,16 @@ export default function Sidebar({ onOpenPalette }) {
   };
 
   return (
-    <nav className="sidebar">
+    <nav className={`sidebar${isOpen ? ' sidebar--open' : ''}`}>
+      {/* Mobile close button */}
+      <button
+        type="button"
+        className="sidebar-close-btn"
+        onClick={onClose}
+        aria-label="Close navigation"
+      >
+        ✕
+      </button>
       <div className="sidebar-brand">
         <div>
           <span className="brand-tag">Generative AI Cyber Threat Platform</span>
@@ -91,6 +100,7 @@ export default function Sidebar({ onOpenPalette }) {
                     to={item.path}
                     end={item.path === '/'}
                     className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}
+                    onClick={onClose}
                   >
                     <span className="nav-code">{item.code}</span>
                     <span className="nav-label">{item.label}</span>
