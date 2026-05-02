@@ -76,6 +76,11 @@ app.use((err, _req, res, _next) => {
   res.status(status).json({ error: err.message || 'Unexpected server error' });
 });
 
-app.listen(PORT, () => {
-  console.log(`CyberGuard backend running on http://localhost:${PORT}`);
-});
+// Only start the HTTP server when run directly (not in serverless/Netlify Functions)
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`CyberGuard backend running on http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;
